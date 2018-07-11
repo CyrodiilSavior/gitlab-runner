@@ -8,11 +8,16 @@ import (
 )
 
 type ExecutorOptions struct {
+	DefaultSetUID    bool
 	DefaultBuildsDir string
 	DefaultCacheDir  string
 	SharedBuildsDir  bool
 	Shell            common.ShellScriptInfo
 	ShowHostname     bool
+	UserHomeDir      string
+	ValidatedUserUID int
+	ValidatedUserGID int
+	ValidatedUser    string
 }
 
 type AbstractExecutor struct {

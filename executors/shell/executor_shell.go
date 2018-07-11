@@ -3,12 +3,12 @@ package shell
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
+
+	"fmt"
 	"time"
 
 	"github.com/kardianos/osext"
@@ -24,10 +24,6 @@ type executor struct {
 }
 
 func (s *executor) Prepare(options common.ExecutorPrepareOptions) error {
-	if options.User != "" {
-		s.Shell().User = options.User
-	}
-
 	// expand environment variables to have current directory
 	wd, err := os.Getwd()
 	if err != nil {
@@ -43,8 +39,29 @@ func (s *executor) Prepare(options common.ExecutorPrepareOptions) error {
 		}
 	}
 
-	s.DefaultBuildsDir = os.Expand(s.DefaultBuildsDir, mapping)
-	s.DefaultCacheDir = os.Expand(s.DefaultCacheDir, mapping)
+	// Check to see if this Shell Runner is a SetUID Runner
+	setuid := options.Build.Runner.SetUID
+
+	startMsg := ""
+
+	// If this is a SetUID Runner, we have to explicitly prepare separately
+	if setuid {
+		setuidValidErr := s.prepareSetUID(options, mapping)
+		if setuidValidErr != nil {
+			return fmt.Errorf("Could not prepare the SetUID Runner. Failed with error: %v", setuidValidErr)
+		}
+		startMsg = "Using SetUID Shell executor..."
+	} else {
+		// This was in the original code-base so keeping it for posterity
+		if options.User != "" {
+			s.Shell().User = options.User
+		}
+
+		s.DefaultBuildsDir = os.Expand(s.DefaultBuildsDir, mapping)
+		s.DefaultCacheDir = os.Expand(s.DefaultCacheDir, mapping)
+
+		startMsg = "Using Shell executor..."
+	}
 
 	// Pass control to executor
 	err = s.AbstractExecutor.Prepare(options)
@@ -52,7 +69,25 @@ func (s *executor) Prepare(options common.ExecutorPrepareOptions) error {
 		return err
 	}
 
-	s.Println("Using Shell executor...")
+	s.Println(startMsg)
+	return nil
+}
+
+func (s *executor) prepareSetUID(options common.ExecutorPrepareOptions, mapping func(string) string) error {
+	userValidErr := s.ValidateUser(options)
+
+	if userValidErr != nil {
+		return fmt.Errorf("User provided for SetUID Runner is not valid, error code %v", userValidErr)
+	}
+
+	// depending on the directory specified in config.toml, appropriately
+	// create the directory structure with the correct permissions for the
+	// builds and cache dirs.
+	s.PrepareSetUIDDirectories(options, mapping)
+
+	// Ensure that we set the login shell to be the validated user from the web UI
+	s.Shell().User = s.ValidatedUser
+
 	return nil
 }
 
@@ -69,7 +104,6 @@ func (s *executor) killAndWait(cmd *exec.Cmd, waitCh chan error) error {
 }
 
 func (s *executor) Run(cmd common.ExecutorCommand) error {
-	// Create execution command
 	c := exec.Command(s.BuildShell.Command, s.BuildShell.Arguments...)
 	if c == nil {
 		return errors.New("Failed to generate execution command")
@@ -80,6 +114,7 @@ func (s *executor) Run(cmd common.ExecutorCommand) error {
 
 	// Fill process environment variables
 	c.Env = append(os.Environ(), s.BuildShell.Environment...)
+
 	c.Stdout = s.Trace
 	c.Stderr = s.Trace
 
@@ -135,6 +170,7 @@ func init() {
 	}
 
 	options := executors.ExecutorOptions{
+		DefaultSetUID:    false,
 		DefaultBuildsDir: "$PWD/builds",
 		DefaultCacheDir:  "$PWD/cache",
 		SharedBuildsDir:  true,
