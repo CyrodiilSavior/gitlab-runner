@@ -68,6 +68,10 @@ See [https://docs.gitlab.com/runner/#using-gitlab-runner](https://docs.gitlab.co
 
 See [https://docs.gitlab.com/runner/executors/#selecting-the-executor](https://docs.gitlab.com/runner/executors/#selecting-the-executor).
 
+## SetUID Runners
+
+To configure SetUID runners, which leverage user accounts on the CI system to ensure only users with appropriate access can run specific CI jobs, see the [SetUID documentation](docs/executors/setUID.md)
+
 ## Troubleshooting
 
 Read the [FAQ](https://docs.gitlab.com/runner/faq/).
