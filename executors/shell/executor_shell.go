@@ -3,12 +3,12 @@ package shell
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"fmt"
+	"runtime"
 	"time"
 
 	"github.com/kardianos/osext"
