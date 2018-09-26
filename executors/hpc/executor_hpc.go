@@ -116,6 +116,9 @@ func (s *executor) Run(cmd common.ExecutorCommand) error {
 		fmt.Println("status is: ", ps)
 		time.Sleep(time.Millisecond * 500)
 		ps, errPS = session.JobPs(jobID)
+    if ps.String() == "Done" {
+      break
+    }
 	}
 
 	_, errWait := session.Wait(jobID, drmaa.TimeoutWaitForever)
