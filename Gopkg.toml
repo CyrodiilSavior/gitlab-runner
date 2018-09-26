@@ -35,6 +35,10 @@ ignored = ["test", "appengine"]
   version = "1.0.6"
 
 [[constraint]]
+  name = "github.com/dgruber/drmaa"
+  revision = "3f2c6b06409be276a8ccf7c947ab6ed9299e958d"
+
+[[constraint]]
   branch = "master"
   name = "github.com/ayufan/golang-kardianos-service"
 
