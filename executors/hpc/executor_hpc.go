@@ -1,13 +1,8 @@
 package hpc
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"runtime"
 	"time"
 
@@ -17,7 +12,6 @@ import (
 
 	"gitlab.com/gitlab-org/gitlab-runner/common"
 	"gitlab.com/gitlab-org/gitlab-runner/executors"
-	"gitlab.com/gitlab-org/gitlab-runner/helpers"
 )
 
 type executor struct {
@@ -106,28 +100,27 @@ func (s *executor) Run(cmd common.ExecutorCommand) error {
 	defer session.DeleteJobTemplate(&jobTemplate)
 
 	jobTemplate.SetRemoteCommand(s.BuildShell.Command)
-	jobTemplate.SetArgs(s.BuildShell.Arguments...)
+	jobTemplate.SetArgs(s.BuildShell.Arguments)
 
 	jobID, errRun := session.RunJob(&jobTemplate)
 	if errRun != nil {
 		return fmt.Errorf("Could not create DRMAA job process ID: %v", errRun)
 	}
 
-	ps, errPS := s.JobPs(jobID)
+	ps, errPS := session.JobPs(jobID)
 	if errPS != nil {
-		return fmt.Errorf("Error during job status query: %s\n", errPS)
+		return fmt.Errorf("Error during job status query: %s", errPS)
 	}
 
 	for ps != drmaa.PsRunning && errPS == nil {
 		fmt.Println("status is: ", ps)
 		time.Sleep(time.Millisecond * 500)
-		ps, errPS = s.JobPs(jobID)
+		ps, errPS = session.JobPs(jobID)
 	}
 
-	// wait until the job is finished
-	jinfo, errWait := s.Wait(jobID, drmaa.TimeoutWaitForever)
+	jinfo, errWait := session.Wait(jobID, drmaa.TimeoutWaitForever)
 	if errWait != nil {
-		return fmt.Errorf("Error during waiting until job %s is finished: %s\n", jobID, errWait)
+		return fmt.Errorf("Error during waiting until job %s is finished: %s", jobID, errWait)
 	}
 }
 
