@@ -200,6 +200,7 @@ func init() {
 		}
 	}
 
+  fmt.Println("About to register the Shell executor type...")
 	common.RegisterExecutor("shell", executors.DefaultExecutorProvider{
 		Creator:          creator,
 		FeaturesUpdater:  featuresUpdater,

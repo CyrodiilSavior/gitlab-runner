@@ -169,6 +169,7 @@ func init() {
 		}
 	}
 
+  fmt.Println("About to register the HPC Runner...")
 	common.RegisterExecutor("hpc", executors.DefaultExecutorProvider{
 		Creator:          creator,
 		FeaturesUpdater:  featuresUpdater,
