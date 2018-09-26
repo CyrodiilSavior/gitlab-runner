@@ -122,6 +122,9 @@ func (s *executor) Run(cmd common.ExecutorCommand) error {
 	if errWait != nil {
 		return fmt.Errorf("Error during waiting until job %s is finished: %s", jobID, errWait)
 	}
+
+	s.Println("Successfully completed HPC job")
+	return nil
 }
 
 func init() {
