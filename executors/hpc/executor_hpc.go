@@ -118,9 +118,9 @@ func (s *executor) Run(cmd common.ExecutorCommand) error {
 		ps, errPS = session.JobPs(jobID)
 	}
 
-	jinfo, errWait := session.Wait(jobID, drmaa.TimeoutWaitForever)
+	_, errWait := session.Wait(jobID, drmaa.TimeoutWaitForever)
 	if errWait != nil {
-		return fmt.Errorf("Error during waiting until job %s is finished: %s", jobID, errWait)
+		return fmt.Errorf("Error waiting for job %s to finish: %s", jobID, errWait)
 	}
 
 	s.Println("Successfully completed HPC job")
