@@ -250,6 +250,8 @@ type RunnerSettings struct {
 
 	Shell string `toml:"shell,omitempty" json:"shell" long:"shell" env:"RUNNER_SHELL" description:"Select bash, cmd or powershell"`
 
+	HPC string `toml:"hpc,omitempty" json:"hpc" long:"hpc" env:"RUNNER_HPC" description:"A Runner which can connect to HPC systems via DRMAA"`
+
 	SSH        *ssh.Config       `toml:"ssh,omitempty" json:"ssh" group:"ssh executor" namespace:"ssh"`
 	Docker     *DockerConfig     `toml:"docker,omitempty" json:"docker" group:"docker executor" namespace:"docker"`
 	Parallels  *ParallelsConfig  `toml:"parallels,omitempty" json:"parallels" group:"parallels executor" namespace:"parallels"`
