@@ -169,7 +169,7 @@ func init() {
 		}
 	}
 
-	common.RegisterExecutor("shell", executors.DefaultExecutorProvider{
+	common.RegisterExecutor("hpc", executors.DefaultExecutorProvider{
 		Creator:          creator,
 		FeaturesUpdater:  featuresUpdater,
 		DefaultShellName: options.Shell.Shell,
