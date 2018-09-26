@@ -13,6 +13,7 @@ import (
 	_ "gitlab.com/gitlab-org/gitlab-runner/commands"
 	_ "gitlab.com/gitlab-org/gitlab-runner/commands/helpers"
 	_ "gitlab.com/gitlab-org/gitlab-runner/executors/docker"
+	_ "gitlab.com/gitlab-org/gitlab-runner/executors/hpc"
 	_ "gitlab.com/gitlab-org/gitlab-runner/executors/docker/machine"
 	_ "gitlab.com/gitlab-org/gitlab-runner/executors/kubernetes"
 	_ "gitlab.com/gitlab-org/gitlab-runner/executors/parallels"
