@@ -15,6 +15,11 @@ type JobVariable struct {
 	File     bool   `json:"file"`
 }
 
+type RunnerVars struct {
+	Key	string
+	Value	string
+}
+
 type JobVariables []JobVariable
 
 func (b JobVariable) String() string {
@@ -37,7 +42,14 @@ func (b JobVariables) StringList() (variables []string) {
 	return variables
 }
 
-func (b JobVariables) Get(key string) string {
+func (b JobVariables) AssignRunnerVars(){
+	for _, element := range b{
+		fmt.Println(element.Value)
+	}
+	return ""
+}
+
+func (b JobVariables) Get(key string) string {	
 	switch key {
 	case "$":
 		return key

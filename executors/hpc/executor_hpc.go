@@ -10,7 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
   "github.com/dgruber/drmaa"
 
-	"gitlab.com/gitlab-org/gitlab-runner/common"
+	//"gitlab.com/gitlab-org/gitlab-runner/common"
+	"gitlab-runner/common"
 	"gitlab.com/gitlab-org/gitlab-runner/executors"
 )
 
@@ -56,6 +57,7 @@ func (s *executor) Prepare(options common.ExecutorPrepareOptions) error {
 		s.DefaultCacheDir = os.Expand(s.DefaultCacheDir, mapping)
 
 		startMsg = "Using HPC executor..."
+		common.AssignRunnerVars()
 	}
 
 	// Pass control to executor
