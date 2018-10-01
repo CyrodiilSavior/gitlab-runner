@@ -46,7 +46,6 @@ func (b JobVariables) AssignRunnerVars(){
 	for _, element := range b{
 		fmt.Println(element.Value)
 	}
-	return ""
 }
 
 func (b JobVariables) Get(key string) string {	
